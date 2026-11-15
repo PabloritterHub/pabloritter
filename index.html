@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pablo Ritter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sitio dominado por imagen. Menú mínimo arriba, grilla de fotogramas a dos columnas,
+   luego galería, portadas de música cuadradas, sobre mí y contacto. Casi sin texto decorativo. */
+:root {
+  color-scheme: dark;
+  --bg: #050506;
+  --surface: #101214;
+  --fg: #ECEDEE;
+  --muted: #8F979E;
+  --line: #24282C;
+  --accent: #7C9CFF;
+  --accent-fg: #050506;
+  --font-display: "Archivo", "Arial Narrow", Arial, sans-serif;
+  --font-body: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  padding-block: 0 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.wrap { max-width: 1280px; margin: 0 auto; }
+.mono { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+.note {
+  margin: 0 calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  padding: 8px max(16px, env(safe-area-inset-left, 0px));
+  background: var(--accent); color: var(--accent-fg); font-size: 13px; text-align: center;
+}
+
+/* Cabecera */
+header.top {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 10px 32px; padding-block: 22px 18px;
+}
+.brand {
+  font-family: var(--font-display); font-weight: 700; font-size: 15px;
+  letter-spacing: .22em; text-transform: uppercase; text-decoration: none;
+}
+nav { display: flex; flex-wrap: wrap; gap: 4px 26px; }
+nav a {
+  text-decoration: none; font-size: 13px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); padding-block: 4px; border-bottom: 1px solid transparent;
+}
+nav a:hover { color: var(--fg); border-color: var(--fg); }
+
+/* Filtros */
+.filters { display: flex; flex-wrap: wrap; gap: 4px 22px; padding-block: 8px 20px; }
+.filters button {
+  font: inherit; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; cursor: pointer;
+  background: none; border: 0; border-bottom: 1px solid transparent; color: var(--muted); padding: 4px 0;
+}
+#filtros-musica button { text-transform: none; font-size: 14px; letter-spacing: .04em; }
+.filters button:hover { color: var(--fg); }
+.filters button[aria-pressed="true"] { color: var(--fg); border-color: var(--fg); }
+
+/* Fotogramas */
+.stills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.still { position: relative; display: block; overflow: hidden; text-decoration: none; color: #fff; aspect-ratio: 16 / 9; max-width: 100%; background: #222; }
+.still[hidden] { display: none !important; }
+.still .art {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 28% 24%, hsl(var(--h1) 70% 62% / .5), transparent 52%),
+    linear-gradient(150deg, hsl(var(--h1) 36% 15%), hsl(var(--h2) 46% 32%));
+  transition: transform .5s ease;
+}
+.still:hover .art { transform: scale(1.04); }
+.still .cap {
+  position: absolute; inset: auto 0 0 0; padding: 40px 16px 14px;
+  background: linear-gradient(to top, rgb(0 0 0 / .7), transparent);
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 14px;
+}
+.still h3 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(16px, 2vw, 21px); letter-spacing: .02em; line-height: 1.2; }
+.still .meta { font-family: var(--font-mono); font-size: 11px; letter-spacing: .05em; opacity: .85; }
+.still .play {
+  position: absolute; left: 50%; top: 50%; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%;
+  border: 1.5px solid rgb(255 255 255 / .85); opacity: 0; transition: opacity .25s ease;
+}
+.still .play::after { content: ""; position: absolute; left: 21px; top: 15px; border-style: solid; border-width: 10px 0 10px 16px; border-color: transparent transparent transparent #fff; }
+.still:hover .play, .still:focus-visible .play { opacity: 1; }
+
+/* Secciones */
+section { padding-top: 64px; scroll-margin-top: 8px; }
+h2 {
+  margin: 0 0 20px; font-family: var(--font-display); font-weight: 600; font-size: 13px;
+  letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
+}
+
+/* Galería */
+.gallery { column-width: 280px; column-gap: 14px; }
+.shot { margin: 0 0 14px; break-inside: avoid; position: relative; overflow: hidden; max-width: 100%; }
+.shot .img {
+  display: block; width: 100%; max-width: 100%;
+  background:
+    radial-gradient(circle at 30% 22%, hsl(var(--h1) 65% 62% / .5), transparent 55%),
+    linear-gradient(160deg, hsl(var(--h1) 34% 16%), hsl(var(--h2) 44% 32%));
+  transition: transform .5s ease;
+}
+.shot:hover .img { transform: scale(1.03); }
+.shot figcaption {
+  position: absolute; inset: auto 0 0 0; padding: 30px 12px 10px; color: #fff;
+  background: linear-gradient(to top, rgb(0 0 0 / .65), transparent);
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em;
+}
+
+/* Música: portadas */
+.covers { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 24px 14px; }
+.cover { display: flex; flex-direction: column; gap: 10px; text-decoration: none; min-width: 0; }
+.cover .sq {
+  position: relative; aspect-ratio: 1 / 1; overflow: hidden; max-width: 100%;
+  background:
+    radial-gradient(circle at 70% 30%, hsl(var(--h1) 70% 60% / .55), transparent 55%),
+    linear-gradient(200deg, hsl(var(--h1) 36% 16%), hsl(var(--h2) 46% 32%));
+}
+.cover .sq::after {
+  content: ""; position: absolute; right: -18%; bottom: -18%; width: 60%; aspect-ratio: 1;
+  border-radius: 50%; border: 1px solid rgb(255 255 255 / .3); box-shadow: 0 0 0 14px rgb(255 255 255 / .06);
+}
+.cover .tipo { position: absolute; left: 12px; top: 10px; color: #fff; font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; z-index: 1; }
+.cover:hover .sq { filter: brightness(1.12); }
+.cover h3, .cover .nombre { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 16px; line-height: 1.25; }
+button.cover { font: inherit; color: inherit; background: none; border: 0; padding: 0; text-align: left; cursor: pointer; }
+.bandinfo { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 22px; margin-bottom: 20px; }
+.bandinfo a { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid var(--fg); }
+.bandinfo a:hover { color: var(--accent); border-color: var(--accent); }
+
+/* Ventana de álbum */
+.overlay {
+  position: fixed; inset: 0; z-index: 50; background: rgb(0 0 0 / .8); display: grid; place-items: center; overflow-y: auto;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+}
+.panel { position: relative; width: 100%; max-width: 880px; background: var(--surface); border: 1px solid var(--line); display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); }
+.pcover { aspect-ratio: 1 / 1; max-width: 100%; }
+.pbody { padding: 32px 30px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; min-width: 0; }
+.pbody h3 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(22px, 3.4vw, 32px); line-height: 1.15; }
+.pbody h4 { margin: 0 0 4px; font-family: var(--font-mono); font-weight: 500; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.pbody p { margin: 0; max-width: 52ch; }
+.pbody .bloque { display: block; }
+.pbody .btn { margin-top: 8px; }
+a.btn { display: inline-block; text-decoration: none; }
+.cerrar {
+  position: absolute; top: 8px; right: 8px; z-index: 2; width: 40px; height: 40px; font: inherit; font-size: 26px; line-height: 1;
+  cursor: pointer; background: rgb(0 0 0 / .45); color: #fff; border: 0; border-radius: 50%;
+}
+.cerrar:hover { background: rgb(0 0 0 / .7); }
+@media (max-width: 720px) {
+  .panel { grid-template-columns: minmax(0, 1fr); }
+  .pcover { aspect-ratio: 16 / 9; }
+  .pbody { padding: 22px 18px 26px; }
+}
+
+/* Sobre mí */
+.about { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 28px 64px; }
+.about p { margin: 0 0 1em; max-width: 58ch; }
+.spec { margin: 0; border-top: 1px solid var(--line); }
+.spec div { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 12px; padding-block: 11px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.spec dt { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding-top: 3px; }
+.spec dd { margin: 0; }
+
+/* Contacto */
+.addr { font-family: var(--font-display); font-weight: 600; font-size: clamp(24px, 4.4vw, 44px); line-height: 1.15; overflow-wrap: anywhere; user-select: all; }
+.mail { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-bottom: 18px; }
+.btn {
+  font: inherit; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; cursor: pointer;
+  padding: 9px 18px; background: transparent; color: var(--fg); border: 1px solid var(--fg);
+}
+.btn:hover { background: var(--fg); color: var(--bg); }
+.social { display: flex; flex-wrap: wrap; gap: 6px 24px; margin: 0; padding: 0; list-style: none; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; }
+.social a { text-decoration: none; color: var(--muted); border-bottom: 1px solid var(--line); }
+.social a:hover { color: var(--fg); border-color: var(--fg); }
+
+footer { padding-top: 56px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
+
+@media (max-width: 720px) {
+  .stills { grid-template-columns: minmax(0, 1fr); }
+  .about { grid-template-columns: minmax(0, 1fr); }
+  .still .play { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .still .art, .shot .img, .still .play { transition: none; }
+  .still:hover .art, .shot:hover .img { transform: none; }
+}
+</style>
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="note">Plantilla de ejemplo: cambia los textos, enlaces e imágenes por los tuyos y borra este aviso.</div>
+
+  <header class="top">
+    <a class="brand" href="#inicio">Pablo Ritter</a>
+    <nav aria-label="Secciones">
+      <a href="#inicio">Video</a>
+      <a href="#imagenes">Imágenes</a>
+      <a href="#musica">Música</a>
+      <a href="#sobre-mi">Sobre mí</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+  </header>
+
+  <main id="inicio">
+    <div class="filters" id="filtros" role="group" aria-label="Filtrar video por tipo"></div>
+    <div class="stills" id="grilla"></div>
+
+    <section id="imagenes">
+      <h2>Imágenes</h2>
+      <div class="gallery" id="galeria"></div>
+    </section>
+
+    <section id="musica">
+      <h2>Música</h2>
+      <div class="filters" id="filtros-musica" role="group" aria-label="Filtrar música por banda"></div>
+      <div class="bandinfo" id="banda-info" hidden></div>
+      <div class="covers" id="portadas"></div>
+    </section>
+
+    <section id="sobre-mi">
+      <h2>Sobre mí</h2>
+      <div class="about">
+        <div>
+          <p>Soy realizador audiovisual y músico. Trabajo desde la idea hasta la pieza terminada: escribo, filmo, monto, hago la corrección de color y compongo o mezclo el sonido.</p>
+          <p>Me interesa que imagen y música se piensen juntas desde el principio, porque así cada corte cae donde debe y cada silencio cuenta algo.</p>
+        </div>
+        <dl class="spec">
+          <div><dt>Roles</dt><dd>Dirección, fotografía, montaje, composición, mezcla</dd></div>
+          <div><dt>Cámara</dt><dd>Sony FX3, lentes fijos 35 y 50 mm</dd></div>
+          <div><dt>Edición</dt><dd>DaVinci Resolve, Premiere Pro</dd></div>
+          <div><dt>Sonido</dt><dd>Ableton Live, interfaz de audio, micrófonos de campo</dd></div>
+          <div><dt>Base</dt><dd>Valdivia, Chile · disponible para viajar</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section id="contacto">
+      <h2>Contacto</h2>
+      <div class="mail">
+        <span class="addr" id="correo">tucorreo@ejemplo.cl</span>
+        <button class="btn" type="button" id="copiar">Copiar</button>
+        <span class="mono" id="estado" role="status" aria-live="polite"></span>
+      </div>
+      <ul class="social">
+        <li><a href="https://vimeo.com/" target="_blank" rel="noopener">Vimeo</a></li>
+        <li><a href="https://deceptionisland.bandcamp.com/" target="_blank" rel="noopener">Bandcamp</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <div class="overlay" id="album-overlay" hidden>
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="album-titulo">
+      <button class="cerrar" type="button" id="album-cerrar" aria-label="Cerrar">&times;</button>
+      <div class="pcover still" id="album-portada" style="position:relative"><span class="art" id="album-arte"></span></div>
+      <div class="pbody">
+        <span class="mono" id="album-tipo"></span>
+        <h3 id="album-titulo"></h3>
+        <span class="mono" id="album-meta"></span>
+        <div class="bloque" id="album-desc-bloque"><h4>Sobre el álbum</h4><p id="album-desc"></p></div>
+        <div class="bloque" id="album-rol-bloque"><h4>Rol</h4><p id="album-rol"></p></div>
+        <a class="btn" id="album-escuchar" target="_blank" rel="noopener"></a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="mono">© 2026 Pablo Ritter</span>
+    <span class="mono">Valdivia, Chile</span>
+  </footer>
+</div>
+
+<script>
+/* ===== Edita aquí tus datos ===== */
+var TRABAJOS = [
+  { t: "Marea baja",          cat: "Clips",    year: 2026, dur: "3:42",  url: "https://vimeo.com/", h1: 205, h2: 245 },
+  { t: "Niebla",              cat: "Cortometraje", year: 2024, dur: "11:30", url: "https://vimeo.com/",       h1: 260, h2: 300 },
+  { t: "Turbina",             cat: "Clips",    year: 2023, dur: "4:12",  url: "https://vimeo.com/", h1: 330, h2: 250 }
+];
+var FOTOS = [
+  { t: "Muelle al amanecer",    info: "35 mm · ƒ/2.8 · 1/250", ar: "3 / 2",    h1: 200, h2: 30 },
+  { t: "Retrato en el taller",  info: "50 mm · ƒ/1.8 · 1/125", ar: "4 / 5",    h1: 20,  h2: 340 },
+  { t: "Lluvia en la costanera", info: "35 mm · ƒ/2 · 1/60",   ar: "3 / 2",    h1: 230, h2: 270 },
+  { t: "Fotograma, Niebla",     info: "2.39:1 · 24 fps",       ar: "2.39 / 1", h1: 260, h2: 300 },
+  { t: "Feria, puesto 14",      info: "50 mm · ƒ/2.8 · 1/500", ar: "1 / 1",    h1: 45,  h2: 10 },
+  { t: "Bosque valdiviano",     info: "24 mm · ƒ/5.6 · 1/30",  ar: "4 / 5",    h1: 140, h2: 180 }
+];
+/* Cada banda con su perfil de Bandcamp (url) y sus discos con enlace */
+var BANDAS = [
+  { n: "A Cerca Abril", h1: 20, h2: 340, url: "", discos: [
+    { t: "A Cerca Abril 2006-2007", tipo: "Colección", url: "https://soundcloud.com/losgatossuabes/sets/a-cerca-abril-2006-2007",
+      genero: "Post hardcore",
+      descripcion: "Demos grabados durante los veranos del 2006 y 2007.",
+      rol: "Fundador, guitarra y composición." }
+  ] },
+  { n: "derpablo", h1: 150, h2: 190, url: "https://soundcloud.com/user-62358611/albums", discos: [
+    { t: "Choreography", year: 2019, url: "https://soundcloud.com/user-62358611/albums",
+      genero: "Synthpop / electronic / industrial",
+      descripcion: "Álbum grabado en el verano de 2019 (agosto) en Berlín, Alemania.",
+      rol: "Producción, mezcla, sintetizadores, drum machine y voz." }
+  ] },
+  { n: "Deception Island", h1: 230, h2: 270, url: "https://deceptionisland.bandcamp.com/", discos: [
+    { t: "Human Jigsaw", year: 2027, url: "https://deceptionisland.bandcamp.com/album/human-jigsaw", h1: 205, h2: 245,
+      descripcion: "Texto de ejemplo: aquí cuentas de qué trata el álbum, cómo se hizo y qué sonidos lo definen.",
+      rol: "Texto de ejemplo: aquí va tu rol en el álbum, por ejemplo composición, grabación y mezcla." }
+  ] },
+  { n: "De Jacques Du Nand", h1: 45, h2: 10, url: "", discos: [] }
+];
+/* ================================ */
+
+(function () {
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function hues(node, a, b) { node.style.setProperty("--h1", a); node.style.setProperty("--h2", b); }
+
+  /* Video */
+  var grilla = document.getElementById("grilla");
+  var filtros = document.getElementById("filtros");
+  TRABAJOS.forEach(function (w) {
+    var a = el("a", "still");
+    a.href = w.url; a.target = "_blank"; a.rel = "noopener";
+    a.setAttribute("data-cat", w.cat);
+    a.setAttribute("aria-label", w.t + ", " + w.cat + " " + w.year);
+    var art = el("span", "art"); hues(art, w.h1, w.h2); a.appendChild(art);
+    a.appendChild(el("span", "play"));
+    var cap = el("span", "cap");
+    cap.appendChild(el("h3", null, w.t));
+    cap.appendChild(el("span", "meta", w.cat + " · " + w.year + " · " + w.dur));
+    a.appendChild(cap);
+    grilla.appendChild(a);
+  });
+  var cats = ["Todos"];
+  TRABAJOS.forEach(function (w) { if (cats.indexOf(w.cat) < 0) cats.push(w.cat); });
+  cats.forEach(function (c, i) {
+    var b = el("button", null, c);
+    b.type = "button"; b.id = "filtro-" + i;
+    b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+    b.addEventListener("click", function () {
+      Array.prototype.forEach.call(filtros.children, function (x) { x.setAttribute("aria-pressed", "false"); });
+      b.setAttribute("aria-pressed", "true");
+      Array.prototype.forEach.call(grilla.children, function (card) {
+        card.hidden = !(c === "Todos" || card.getAttribute("data-cat") === c);
+      });
+    });
+    filtros.appendChild(b);
+  });
+
+  /* Imágenes */
+  var galeria = document.getElementById("galeria");
+  FOTOS.forEach(function (p) {
+    var fig = el("figure", "shot");
+    var img = el("span", "img");
+    hues(img, p.h1, p.h2); img.style.aspectRatio = p.ar;
+    img.setAttribute("role", "img"); img.setAttribute("aria-label", p.t);
+    fig.appendChild(img);
+    var cap = el("figcaption");
+    cap.appendChild(el("span", null, p.t));
+    cap.appendChild(el("span", null, p.info));
+    fig.appendChild(cap);
+    galeria.appendChild(fig);
+  });
+
+  /* Música */
+  var portadas = document.getElementById("portadas");
+  var info = document.getElementById("banda-info");
+  var filtrosMusica = document.getElementById("filtros-musica");
+  var botonesBanda = [];
+
+  function portada(tag, nombre, tipo, h1, h2, url, extra) {
+    var a = el(tag, "cover");
+    if (tag === "a") { a.href = url; a.target = "_blank"; a.rel = "noopener"; a.setAttribute("aria-label", "Escuchar " + nombre); }
+    if (tag === "button") a.type = "button";
+    var sq = el("span", "sq"); hues(sq, h1, h2);
+    sq.appendChild(el("span", "tipo", tipo));
+    a.appendChild(sq);
+    a.appendChild(el("span", "nombre", nombre));
+    if (extra) a.appendChild(el("span", "mono", extra));
+    return a;
+  }
+
+  /* Ventana de álbum */
+  var overlay = document.getElementById("album-overlay");
+  var cerrar = document.getElementById("album-cerrar");
+  var ultimoFoco = null;
+  function plataforma(url) {
+    if (url.indexOf("bandcamp") > -1) return "Bandcamp";
+    if (url.indexOf("soundcloud") > -1) return "SoundCloud";
+    return "enlace";
+  }
+  function bloque(id, texto) {
+    document.getElementById(id + "-bloque").hidden = !texto;
+    document.getElementById(id).textContent = texto || "";
+  }
+  function abrir(b, d) {
+    ultimoFoco = document.activeElement;
+    var arte = document.getElementById("album-arte");
+    hues(arte, d.h1 || b.h1, d.h2 || b.h2);
+    document.getElementById("album-portada").style.setProperty("--h1", d.h1 || b.h1);
+    document.getElementById("album-portada").style.setProperty("--h2", d.h2 || b.h2);
+    document.getElementById("album-tipo").textContent = d.tipo || "Álbum";
+    document.getElementById("album-titulo").textContent = d.t;
+    document.getElementById("album-meta").textContent = b.n + (d.genero ? " · " + d.genero : "") + (d.year ? " · " + d.year : "");
+    bloque("album-desc", d.descripcion);
+    bloque("album-rol", d.rol);
+    var l = document.getElementById("album-escuchar");
+    l.href = d.url; l.textContent = "Escuchar en " + plataforma(d.url);
+    overlay.hidden = false;
+    cerrar.focus();
+  }
+  function cerrarVentana() {
+    overlay.hidden = true;
+    if (ultimoFoco && ultimoFoco.focus) ultimoFoco.focus();
+  }
+  cerrar.addEventListener("click", cerrarVentana);
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) cerrarVentana(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !overlay.hidden) cerrarVentana(); });
+
+  function mostrar(i) {
+    botonesBanda.forEach(function (x, k) { x.setAttribute("aria-pressed", k === i ? "true" : "false"); });
+    portadas.textContent = "";
+    info.textContent = "";
+    if (i === 0) {
+      info.hidden = true;
+      BANDAS.forEach(function (b, k) {
+        var t = portada("button", b.n, "Banda", b.h1, b.h2, "", "Ver discos");
+        t.id = "portada-banda-" + k;
+        t.addEventListener("click", function () { mostrar(k + 1); });
+        portadas.appendChild(t);
+      });
+      return;
+    }
+    var b = BANDAS[i - 1];
+    info.hidden = false;
+    info.appendChild(el("span", "mono", b.discos.length ? "Discos de " + b.n : b.n));
+    if (b.url) {
+      var l = el("a", null, "Ver todo en " + plataforma(b.url));
+      l.href = b.url; l.target = "_blank"; l.rel = "noopener";
+      info.appendChild(l);
+    }
+    if (!b.discos.length) info.appendChild(el("span", "mono", "Los discos de esta banda se agregarán aquí."));
+    b.discos.forEach(function (d) {
+      var t = portada("button", d.t, d.tipo || "Álbum", d.h1 || b.h1, d.h2 || b.h2, "", (d.year ? d.year + " · " : "") + "Ver detalles");
+      t.addEventListener("click", function () { abrir(b, d); });
+      portadas.appendChild(t);
+    });
+  }
+
+  ["Todas"].concat(BANDAS.map(function (b) { return b.n; })).forEach(function (c, i) {
+    var b = el("button", null, c);
+    b.type = "button"; b.id = "banda-" + i;
+    b.addEventListener("click", function () { mostrar(i); });
+    filtrosMusica.appendChild(b);
+    botonesBanda.push(b);
+  });
+  mostrar(0);
+
+  /* Copiar correo */
+  var estado = document.getElementById("estado");
+  document.getElementById("copiar").addEventListener("click", function () {
+    var txt = document.getElementById("correo").textContent;
+    function sel() {
+      var r = document.createRange(); r.selectNodeContents(document.getElementById("correo"));
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    }
+    function listo(ok) { estado.textContent = ok ? "Copiado" : "Selecciona y copia el correo"; setTimeout(function () { estado.textContent = ""; }, 2500); }
+    try {
+      navigator.clipboard.writeText(txt).then(function () { listo(true); }, function () { sel(); listo(false); });
+    } catch (e) { sel(); listo(false); }
+  });
+})();
+</script>
+</body>
+</html>
