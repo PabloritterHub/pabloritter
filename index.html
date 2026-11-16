@@ -98,6 +98,7 @@ nav a:hover { color: var(--fg); border-color: var(--fg); }
 
 /* Secciones */
 section { padding-top: 64px; scroll-margin-top: 8px; }
+section.primera { padding-top: 24px; }
 h2 {
   margin: 0 0 20px; font-family: var(--font-display); font-weight: 600; font-size: 13px;
   letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
@@ -209,51 +210,41 @@ footer { padding-top: 56px; display: flex; flex-wrap: wrap; justify-content: spa
   <header class="top">
     <a class="brand" href="#inicio">Pablo Ritter</a>
     <nav aria-label="Secciones">
-      <a href="#inicio">Video</a>
-      <a href="#imagenes">Imágenes</a>
       <a href="#musica">Música</a>
+      <a href="#imagenes">Imágenes</a>
+      <a href="#video">Video</a>
       <a href="#sobre-mi">Sobre mí</a>
       <a href="#contacto">Contacto</a>
     </nav>
   </header>
 
   <main id="inicio">
-    <div class="filters" id="filtros" role="group" aria-label="Filtrar video por tipo"></div>
-    <div class="stills" id="grilla"></div>
-
-    <section id="imagenes">
-      <h2>Imágenes</h2>
-      <div class="gallery" id="galeria"></div>
-    </section>
-
-    <section id="musica">
+    <section id="musica" class="primera">
       <h2>Música</h2>
       <div class="filters" id="filtros-musica" role="group" aria-label="Filtrar música por banda"></div>
       <div class="bandinfo" id="banda-info" hidden></div>
       <div class="covers" id="portadas"></div>
     </section>
 
+    <section id="imagenes">
+      <h2>Imágenes</h2>
+      <div class="gallery" id="galeria"></div>
+    </section>
+
+    <section id="video">
+      <h2>Video</h2>
+      <div class="filters" id="filtros" role="group" aria-label="Filtrar video por tipo"></div>
+      <div class="stills" id="grilla"></div>
+    </section>
+
     <section id="sobre-mi">
       <h2>Sobre mí</h2>
-      <div class="about">
-        <div>
-          <p>Soy realizador audiovisual y músico. Trabajo desde la idea hasta la pieza terminada: escribo, filmo, monto, hago la corrección de color y compongo o mezclo el sonido.</p>
-          <p>Me interesa que imagen y música se piensen juntas desde el principio, porque así cada corte cae donde debe y cada silencio cuenta algo.</p>
-        </div>
-        <dl class="spec">
-          <div><dt>Roles</dt><dd>Dirección, fotografía, montaje, composición, mezcla</dd></div>
-          <div><dt>Cámara</dt><dd>Sony FX3, lentes fijos 35 y 50 mm</dd></div>
-          <div><dt>Edición</dt><dd>DaVinci Resolve, Premiere Pro</dd></div>
-          <div><dt>Sonido</dt><dd>Ableton Live, interfaz de audio, micrófonos de campo</dd></div>
-          <div><dt>Base</dt><dd>Valdivia, Chile · disponible para viajar</dd></div>
-        </dl>
-      </div>
     </section>
 
     <section id="contacto">
       <h2>Contacto</h2>
       <div class="mail">
-        <span class="addr" id="correo">tucorreo@ejemplo.cl</span>
+        <span class="addr" id="correo">pabloritter@protonmail.com</span>
         <button class="btn" type="button" id="copiar">Copiar</button>
         <span class="mono" id="estado" role="status" aria-live="polite"></span>
       </div>
