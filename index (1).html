@@ -239,25 +239,12 @@ footer { padding-top: 56px; display: flex; flex-wrap: wrap; justify-content: spa
 
     <section id="sobre-mi">
       <h2>Sobre mí</h2>
-      <div class="about">
-        <div>
-          <p>Soy realizador audiovisual y músico. Trabajo desde la idea hasta la pieza terminada: escribo, filmo, monto, hago la corrección de color y compongo o mezclo el sonido.</p>
-          <p>Me interesa que imagen y música se piensen juntas desde el principio, porque así cada corte cae donde debe y cada silencio cuenta algo.</p>
-        </div>
-        <dl class="spec">
-          <div><dt>Roles</dt><dd>Dirección, fotografía, montaje, composición, mezcla</dd></div>
-          <div><dt>Cámara</dt><dd>Sony FX3, lentes fijos 35 y 50 mm</dd></div>
-          <div><dt>Edición</dt><dd>DaVinci Resolve, Premiere Pro</dd></div>
-          <div><dt>Sonido</dt><dd>Ableton Live, interfaz de audio, micrófonos de campo</dd></div>
-          <div><dt>Base</dt><dd>Valdivia, Chile · disponible para viajar</dd></div>
-        </dl>
-      </div>
     </section>
 
     <section id="contacto">
       <h2>Contacto</h2>
       <div class="mail">
-        <span class="addr" id="correo">tucorreo@ejemplo.cl</span>
+        <span class="addr" id="correo">pabloritter@protonmail.com</span>
         <button class="btn" type="button" id="copiar">Copiar</button>
         <span class="mono" id="estado" role="status" aria-live="polite"></span>
       </div>
@@ -339,15 +326,15 @@ var BANDAS = [
   /* Video */
   var grilla = document.getElementById("grilla");
   var filtros = document.getElementById("filtros");
-  TRABAJOS.forEach(function (w) {
+  TRABAJOS.forEach(function (w, k) {
     var a = el("a", "still");
     a.href = w.url; a.target = "_blank"; a.rel = "noopener";
     a.setAttribute("data-cat", w.cat);
-    a.setAttribute("aria-label", w.t + ", " + w.cat + " " + w.year);
+    a.setAttribute("aria-label", "Ver " + w.cat + " " + w.year);
     var art = el("span", "art"); hues(art, w.h1, w.h2); a.appendChild(art);
     a.appendChild(el("span", "play"));
     var cap = el("span", "cap");
-    cap.appendChild(el("h3", null, w.t));
+    cap.appendChild(el("h3", null, "Video " + (k < 9 ? "0" : "") + (k + 1)));
     cap.appendChild(el("span", "meta", w.cat + " · " + w.year + " · " + w.dur));
     a.appendChild(cap);
     grilla.appendChild(a);
@@ -370,15 +357,16 @@ var BANDAS = [
 
   /* Imágenes */
   var galeria = document.getElementById("galeria");
-  FOTOS.forEach(function (p) {
+  FOTOS.forEach(function (p, k) {
+    var n = k + 1;
     var fig = el("figure", "shot");
     var img = el("span", "img");
     hues(img, p.h1, p.h2); img.style.aspectRatio = p.ar;
-    img.setAttribute("role", "img"); img.setAttribute("aria-label", p.t);
+    var nombre = "Imagen " + (n < 10 ? "0" : "") + n;
+    img.setAttribute("role", "img"); img.setAttribute("aria-label", nombre);
     fig.appendChild(img);
     var cap = el("figcaption");
-    cap.appendChild(el("span", null, p.t));
-    cap.appendChild(el("span", null, p.info));
+    cap.appendChild(el("span", null, nombre));
     fig.appendChild(cap);
     galeria.appendChild(fig);
   });
