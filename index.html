@@ -111,7 +111,7 @@ h2 {
 }
 
 /* Galería */
-.gallery { column-width: 280px; column-gap: 14px; }
+.gallery { column-count: 4; column-gap: 14px; }
 .shot { margin: 0 0 14px; break-inside: avoid; position: relative; overflow: hidden; max-width: 100%; }
 .shot .img {
   display: block; width: 100%; max-width: 100%;
@@ -129,7 +129,7 @@ h2 {
 }
 
 /* Música: portadas */
-.covers { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 24px 14px; }
+.covers { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px 14px; }
 .cover { display: flex; flex-direction: column; gap: 10px; text-decoration: none; min-width: 0; }
 .cover .sq {
   position: relative; aspect-ratio: 1 / 1; overflow: hidden; max-width: 100%;
@@ -210,6 +210,8 @@ a.btn { display: inline-block; text-decoration: none; }
 footer { padding-top: 56px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
 
 @media (max-width: 720px) {
+  .gallery { column-count: 2; }
+  .covers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stills { grid-template-columns: minmax(0, 1fr); }
   .about { grid-template-columns: minmax(0, 1fr); }
   .still .play { opacity: 1; }
@@ -341,11 +343,11 @@ var BANDAS = [
   { n: "A Cerca Abril", img: PORTADA_A_CERCA_ABRIL, h1: 20, h2: 340, url: "https://acercaabril.bandcamp.com/", discos: [
     { t: "Demo 2006", bandcamp: "114367835", img: PORTADA_A_CERCA_ABRIL, tipo: "", url: "https://acercaabril.bandcamp.com/album/demo-2006",
       genero: "Post hardcore",
-      descripcion: "Demo de 4 temas: 7Siete, Ballenas Suicidas, Te Sol y Moebius.",
+      descripcion: "Demo grabado en el verano del 2006.",
       rol: "Fundador, guitarra y composición." },
     { t: "Demo 2007", bandcamp: "997783777", img: PORTADA_A_CERCA_ABRIL, tipo: "", url: "https://acercaabril.bandcamp.com/album/demo-2007",
       genero: "Post hardcore",
-      descripcion: "Demo de 4 temas: 7Siete, Ballenas Suicidas, Te Sol y Moebius.",
+      descripcion: "Demo grabado en el verano del 2007.",
       rol: "Fundador, guitarra y composición." }
   ] },
   { n: "derpablo", img: PORTADA_DERPABLO, h1: 150, h2: 190, url: "https://soundcloud.com/user-62358611/albums", discos: [
