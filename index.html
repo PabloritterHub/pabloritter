@@ -166,6 +166,8 @@ button.cover { font: inherit; color: inherit; background: none; border: 0; paddi
 .pbody .bloque { display: block; }
 .pbody .btn { margin-top: 8px; }
 a.btn { display: inline-block; text-decoration: none; }
+.player { width: 100%; }
+.player iframe { display: block; width: 100%; max-width: 100%; border: 0; }
 .vpanel { display: block; max-width: 960px; }
 .vframe { position: relative; aspect-ratio: 16 / 9; width: 100%; max-width: 100%; background: #000; }
 .vframe iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
@@ -289,6 +291,7 @@ footer { padding-top: 56px; display: flex; flex-wrap: wrap; justify-content: spa
         <span class="mono" id="album-meta"></span>
         <div class="bloque" id="album-desc-bloque"><h4>Sobre el álbum</h4><p id="album-desc"></p></div>
         <div class="bloque" id="album-rol-bloque"><h4>Rol</h4><p id="album-rol"></p></div>
+        <div class="player" id="album-player"></div>
         <a class="btn" id="album-escuchar" target="_blank" rel="noopener"></a>
       </div>
     </div>
@@ -335,26 +338,30 @@ var PORTADA_A_CERCA_ABRIL = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/
 
 /* Cada banda con su perfil de Bandcamp (url) y sus discos con enlace */
 var BANDAS = [
-  { n: "A Cerca Abril", img: PORTADA_A_CERCA_ABRIL, h1: 20, h2: 340, url: "", discos: [
-    { t: "Demos 2006-2007", img: PORTADA_A_CERCA_ABRIL, tipo: "", url: "https://soundcloud.com/losgatossuabes/sets/a-cerca-abril-2006-2007",
+  { n: "A Cerca Abril", img: PORTADA_A_CERCA_ABRIL, h1: 20, h2: 340, url: "https://acercaabril.bandcamp.com/", discos: [
+    { t: "Demo 2006", bandcamp: "114367835", img: PORTADA_A_CERCA_ABRIL, tipo: "", url: "https://acercaabril.bandcamp.com/album/demo-2006",
       genero: "Post hardcore",
-      descripcion: "Demos grabados durante los veranos del 2006 y 2007.",
+      descripcion: "Demo de 4 temas: 7Siete, Ballenas Suicidas, Te Sol y Moebius.",
+      rol: "Fundador, guitarra y composición." },
+    { t: "Demo 2007", bandcamp: "997783777", img: PORTADA_A_CERCA_ABRIL, tipo: "", url: "https://acercaabril.bandcamp.com/album/demo-2007",
+      genero: "Post hardcore",
+      descripcion: "Demo de 4 temas: 7Siete, Ballenas Suicidas, Te Sol y Moebius.",
       rol: "Fundador, guitarra y composición." }
   ] },
   { n: "derpablo", img: PORTADA_DERPABLO, h1: 150, h2: 190, url: "https://soundcloud.com/user-62358611/albums", discos: [
-    { t: "Choreography", img: PORTADA_DERPABLO, year: 2019, url: "https://soundcloud.com/user-62358611/albums",
+    { t: "Choreography", soundcloud: "https://soundcloud.com/user-62358611/sets/choreography", img: PORTADA_DERPABLO, year: 2019, url: "https://soundcloud.com/user-62358611/sets/choreography",
       genero: "Synthpop / electronic / industrial",
       descripcion: "Álbum grabado en el verano de 2019 (agosto) en Berlín, Alemania.",
       rol: "Producción, mezcla, sintetizadores, drum machine y voz." }
   ] },
   { n: "Deception Island", img: PORTADA_HUMAN_JIGSAW, h1: 230, h2: 270, url: "https://deceptionisland.bandcamp.com/", discos: [
-    { t: "Human Jigsaw", img: PORTADA_HUMAN_JIGSAW, year: 2027, url: "https://deceptionisland.bandcamp.com/album/human-jigsaw", h1: 205, h2: 245,
+    { t: "Human Jigsaw", bandcamp: "1888699283", img: PORTADA_HUMAN_JIGSAW, year: 2027, url: "https://deceptionisland.bandcamp.com/album/human-jigsaw", h1: 205, h2: 245,
       genero: "EBM / industrial / electronic",
       rol: "Composición, mezcla, sintetizadores, drum machines, samples y voz." }
   ] },
   { n: "De Jacques Du Nand", img: PORTADA_PAS_PARLER, h1: 45, h2: 10, url: "https://open.spotify.com/artist/29qBaEtAqcp1fYkteZrO7z", discos: [
-    { t: "Pas Parler / Se Lo Puso a Lord Cochrane", img: PORTADA_PAS_PARLER, tipo: "", year: 2009, url: "https://open.spotify.com/album/4vTD88PZW5MogUoDaTECSh",
-      descripcion: "LP en vivo en el Teatro Lord Cochrane, en La Fête de la Musique. Valdivia, Chile.",
+    { t: "Pas Parler / Se Lo Puso a Lord Cochrane", spotify: "4vTD88PZW5MogUoDaTECSh", img: PORTADA_PAS_PARLER, tipo: "", year: 2009, url: "https://open.spotify.com/album/4vTD88PZW5MogUoDaTECSh",
+      descripcion: "LP y en vivo en el Teatro Lord Cochrane, en La Fête de la Musique. Valdivia, Chile.",
       rol: "Guitarra y composición." }
   ] },
   { n: "MEPHIFER", h1: 285, h2: 330, url: "", discos: [
@@ -520,6 +527,21 @@ var BANDAS = [
     document.getElementById(id + "-bloque").hidden = !texto;
     document.getElementById(id).textContent = texto || "";
   }
+  /* Reproductor dentro de la ventana: Bandcamp o Spotify. Solo funciona con la página publicada fuera de Claude. */
+  function reproductor(d) {
+    if (d.bandcamp) {
+      return { alto: 280, src: "https://bandcamp.com/EmbeddedPlayer/album=" + d.bandcamp + "/size=large/bgcol=101214/linkcol=7c9cff/tracklist=true/artwork=small/transparent=true/" };
+    }
+    if (d.soundcloud) {
+      return { alto: 380, src: "https://w.soundcloud.com/player/?url=" + encodeURIComponent(d.soundcloud) + "&color=%237c9cff&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false" };
+    }
+    if (d.spotify) {
+      return { alto: 352, src: "https://open.spotify.com/embed/album/" + d.spotify + "?utm_source=generator&theme=0" };
+    }
+    return null;
+  }
+  function limpiarReproductor() { document.getElementById("album-player").textContent = ""; }
+
   function abrir(b, d) {
     ultimoFoco = document.activeElement;
     var arte = document.getElementById("album-arte");
@@ -536,10 +558,20 @@ var BANDAS = [
     var l = document.getElementById("album-escuchar");
     l.hidden = !d.url;
     if (d.url) { l.href = d.url; l.textContent = "Escuchar en " + plataforma(d.url); }
+    limpiarReproductor();
+    var rp = reproductor(d);
+    if (rp) {
+      var f = document.createElement("iframe");
+      f.src = rp.src; f.height = rp.alto; f.title = "Escuchar " + d.t;
+      f.setAttribute("loading", "lazy");
+      f.setAttribute("allow", "autoplay; encrypted-media; fullscreen");
+      document.getElementById("album-player").appendChild(f);
+    }
     overlay.hidden = false;
     cerrar.focus();
   }
   function cerrarVentana() {
+    limpiarReproductor();
     overlay.hidden = true;
     if (ultimoFoco && ultimoFoco.focus) ultimoFoco.focus();
   }
