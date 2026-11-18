@@ -6,7 +6,7 @@
 <title>Pablo Ritter</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
 /* Layout: sitio dominado por imagen. Menú mínimo arriba, grilla de fotogramas a dos columnas,
    luego galería, portadas de música cuadradas, sobre mí y contacto. Casi sin texto decorativo. */
@@ -20,9 +20,11 @@
   --line: #24282C;
   --accent: #7C9CFF;
   --accent-fg: #050506;
+  --neon: #39FF14;
   --font-display: "Archivo", "Arial Narrow", Arial, sans-serif;
   --font-body: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --font-maquina: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
 }
 
 * { box-sizing: border-box; }
@@ -67,7 +69,6 @@ nav a:hover { color: var(--fg); border-color: var(--fg); }
   font: inherit; font-size: calc(12 * var(--u)); letter-spacing: .12em; text-transform: uppercase; cursor: pointer;
   background: none; border: 0; border-bottom: 1px solid transparent; color: var(--muted); padding: 4px 0;
 }
-#filtros-musica button { text-transform: none; font-size: calc(14 * var(--u)); letter-spacing: .04em; }
 .filters button:hover { color: var(--fg); }
 .filters button[aria-pressed="true"] { color: var(--fg); border-color: var(--fg); }
 
@@ -153,6 +154,13 @@ button.cover { font: inherit; color: inherit; background: none; border: 0; paddi
 .bandinfo { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 22px; margin-bottom: 20px; }
 .bandinfo a { font-size: calc(13 * var(--u)); letter-spacing: .1em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid var(--fg); }
 .bandinfo a:hover { color: var(--accent); border-color: var(--accent); }
+.bandinfo button { font: inherit; font-size: calc(13 * var(--u)); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; background: none; border: 0; border-bottom: 1px solid var(--fg); color: var(--fg); padding: 0; }
+.bandinfo button:hover { color: var(--accent); border-color: var(--accent); }
+.proyectos { display: flex; flex-direction: column; gap: 10px; }
+.proyecto { font: inherit; color: inherit; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 0 0 6px; text-align: left; cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 24px; }
+.proyecto .nombre { font-family: var(--font-maquina); font-weight: 400; font-size: clamp(18px, 2.6vw, 26px); line-height: 1.2; letter-spacing: 0; overflow-wrap: anywhere; color: var(--neon); }
+.proyecto:hover { border-color: var(--neon); }
+.proyecto:hover .nombre { text-shadow: 0 0 14px rgb(57 255 20 / .55); }
 
 /* Ventana de álbum */
 .overlay {
@@ -266,7 +274,7 @@ footer { padding-top: 56px; display: flex; flex-wrap: wrap; justify-content: spa
   <main id="inicio">
     <section id="musica" class="primera">
       <h2>Música</h2>
-      <div class="filters" id="filtros-musica" role="group" aria-label="Filtrar música por banda"></div>
+      <div class="filters" id="filtros-musica" role="group" aria-label="Filtrar música por tipo"></div>
       <div class="bandinfo" id="banda-info" hidden></div>
       <div class="covers" id="portadas"></div>
     </section>
@@ -433,7 +441,7 @@ var PORTADA_EP_DJDN = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA
 
 /* Cada banda con su perfil de Bandcamp (url) y sus discos con enlace */
 var BANDAS = [
-  { n: "A Cerca Abril", img: PORTADA_A_CERCA_ABRIL, h1: 20, h2: 340, url: "https://acercaabril.bandcamp.com/", discos: [
+  { n: "A Cerca Abril", grupo: "Banda", img: PORTADA_A_CERCA_ABRIL, h1: 20, h2: 340, url: "https://acercaabril.bandcamp.com/", discos: [
     { t: "Demo 2006", year: 2006, bandcamp: "114367835", img: PORTADA_A_CERCA_ABRIL, tipo: "", url: "https://acercaabril.bandcamp.com/album/demo-2006",
       genero: "Post hardcore",
       descripcion: "Demo grabado en el verano del 2006.",
@@ -443,18 +451,18 @@ var BANDAS = [
       descripcion: "Demo grabado en el verano del 2007.",
       rol: "Fundador, guitarra y composición." }
   ] },
-  { n: "derpablo", img: PORTADA_DERPABLO, h1: 150, h2: 190, url: "https://soundcloud.com/user-62358611/albums", discos: [
+  { n: "derpablo", grupo: "Solo", img: PORTADA_DERPABLO, h1: 150, h2: 190, url: "https://soundcloud.com/user-62358611/albums", discos: [
     { t: "Choreography", soundcloud: "https://soundcloud.com/user-62358611/sets/choreography", img: PORTADA_DERPABLO, year: 2019, url: "https://soundcloud.com/user-62358611/sets/choreography",
       genero: "Synthpop / electronic / industrial",
       descripcion: "Álbum grabado en el verano de 2019 (agosto) en Berlín, Alemania.",
       rol: "Producción, mezcla, sintetizadores, drum machine y voz." }
   ] },
-  { n: "Deception Island", img: PORTADA_HUMAN_JIGSAW, h1: 230, h2: 270, url: "https://deceptionisland.bandcamp.com/", discos: [
+  { n: "Deception Island", grupo: "Solo", img: PORTADA_HUMAN_JIGSAW, h1: 230, h2: 270, url: "https://deceptionisland.bandcamp.com/", discos: [
     { t: "Human Jigsaw", bandcamp: "1888699283", img: PORTADA_HUMAN_JIGSAW, year: 2027, url: "https://deceptionisland.bandcamp.com/album/human-jigsaw", h1: 205, h2: 245,
       genero: "EBM / industrial / electronic",
       rol: "Composición, mezcla, sintetizadores, drum machines, samples y voz." }
   ] },
-  { n: "De Jacques Du Nand", img: PORTADA_PAS_PARLER, h1: 45, h2: 10, url: "https://open.spotify.com/artist/29qBaEtAqcp1fYkteZrO7z", discos: [
+  { n: "De Jacques Du Nand", grupo: "Banda", img: PORTADA_PAS_PARLER, h1: 45, h2: 10, url: "https://open.spotify.com/artist/29qBaEtAqcp1fYkteZrO7z", discos: [
     { t: "Pas Parler / Se Lo Puso a Lord Cochrane", spotify: "4vTD88PZW5MogUoDaTECSh", img: PORTADA_PAS_PARLER, tipo: "", year: 2009, url: "https://open.spotify.com/album/4vTD88PZW5MogUoDaTECSh",
       genero: "Noise rock / hardcore tur bus",
       descripcion: "LP y en vivo en el Teatro Lord Cochrane, en La Fête de la Musique. Valdivia, Chile.",
@@ -464,7 +472,8 @@ var BANDAS = [
       descripcion: "Grabado en Berlín, Alemania, en junio de 2024.",
       rol: "Guitarra, drum machines, sintetizadores y sampler." }
   ] },
-  { n: "MEPHIFER", h1: 285, h2: 330, url: "", discos: [
+  { n: "Animadversion", grupo: "Banda", h1: 265, h2: 305, url: "", discos: [] },
+  { n: "MEPHIFER", grupo: "Solo", h1: 285, h2: 330, url: "", discos: [
     { t: "MEPHIFER", genero: "Power violence / Post hardcore", url: "" }
   ] }
 ];
@@ -708,29 +717,46 @@ var BANDAS = [
   overlay.addEventListener("click", function (e) { if (e.target === overlay) cerrarVentana(); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !overlay.hidden) cerrarVentana(); });
 
-  function mostrar(i) {
+  /* Filtros de música: Todas / Solo / Banda (cada proyecto tiene grupo: "Solo" o "Banda" en BANDAS) */
+  var GRUPOS = ["Todas", "Solo", "Banda"];
+  var modo = 0;
+  function marcar(i) {
     botonesBanda.forEach(function (x, k) { x.setAttribute("aria-pressed", k === i ? "true" : "false"); });
+  }
+  function mostrar(i) {
+    modo = i; marcar(i);
+    portadas.className = "proyectos";
     portadas.textContent = "";
     info.textContent = "";
-    if (i === 0) {
-      info.hidden = true;
-      BANDAS.forEach(function (b, k) {
-        var t = portada("button", b.n, "", b.h1, b.h2, "", "Ver discos", b.img);
-        t.id = "portada-banda-" + k;
-        t.addEventListener("click", function () { mostrar(k + 1); });
-        portadas.appendChild(t);
-      });
-      return;
-    }
-    var b = BANDAS[i - 1];
+    info.hidden = true;
+    BANDAS.forEach(function (b, k) {
+      if (i !== 0 && b.grupo !== GRUPOS[i]) return;
+      var t = el("button", "proyecto");
+      t.type = "button";
+      t.appendChild(el("span", "nombre", b.n));
+      t.appendChild(el("span", "mono", b.discos.length ? "Ver discos" : "Música no disponible"));
+      t.id = "portada-banda-" + k;
+      t.addEventListener("click", function () { mostrarBanda(k); });
+      portadas.appendChild(t);
+    });
+  }
+  function mostrarBanda(k) {
+    var b = BANDAS[k];
+    portadas.className = "covers";
+    portadas.textContent = "";
+    info.textContent = "";
     info.hidden = false;
+    var volver = el("button", null, "\u2190 Volver");
+    volver.type = "button";
+    volver.addEventListener("click", function () { mostrar(modo); });
+    info.appendChild(volver);
     info.appendChild(el("span", "mono", b.discos.length ? "Discos de " + b.n : b.n));
     if (b.url) {
       var l = el("a", null, "Ver todo en " + plataforma(b.url));
       l.href = b.url; l.target = "_blank"; l.rel = "noopener";
       info.appendChild(l);
     }
-    if (!b.discos.length) info.appendChild(el("span", "mono", "Los discos de esta banda se agregarán aquí."));
+    if (!b.discos.length) info.appendChild(el("span", "mono", "Música no disponible"));
     b.discos.forEach(function (d) {
       var t = portada("button", d.t, "", d.h1 || b.h1, d.h2 || b.h2, "", (d.year ? d.year + " · " : "") + "Ver detalles", d.img);
       t.addEventListener("click", function () { abrir(b, d); });
@@ -738,7 +764,7 @@ var BANDAS = [
     });
   }
 
-  ["Todas"].concat(BANDAS.map(function (b) { return b.n; })).forEach(function (c, i) {
+  GRUPOS.forEach(function (c, i) {
     var b = el("button", null, c);
     b.type = "button"; b.id = "banda-" + i;
     b.addEventListener("click", function () { mostrar(i); });
