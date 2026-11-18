@@ -65,13 +65,14 @@ nav a:hover { color: var(--fg); border-color: var(--fg); }
 
 /* Idioma */
 .navwrap { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 26px; }
-.lang { display: flex; gap: 4px 14px; }
+.lang { display: flex; border: 1px solid var(--fg); margin-left: 6px; }
 .lang button {
-  font: inherit; font-size: calc(13 * var(--u)); letter-spacing: .12em; text-transform: uppercase; cursor: pointer;
-  background: none; border: 0; border-bottom: 1px solid transparent; color: var(--muted); padding: 4px 0;
+  font-family: var(--font-mono); font-size: calc(12 * var(--u)); letter-spacing: .1em; text-transform: uppercase; cursor: pointer;
+  background: transparent; border: 0; color: var(--fg); padding: 4px 11px; line-height: 1.4;
 }
-.lang button:hover { color: var(--fg); }
-.lang button[aria-pressed="true"] { color: var(--fg); border-color: var(--fg); }
+.lang button + button { border-left: 1px solid var(--fg); }
+.lang button:hover { background: var(--line); }
+.lang button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
 
 /* Filtros */
 .filters { display: flex; flex-wrap: wrap; gap: 4px 22px; padding-block: 8px 20px; }
