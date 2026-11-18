@@ -156,11 +156,12 @@ button.cover { font: inherit; color: inherit; background: none; border: 0; paddi
 .bandinfo a:hover { color: var(--accent); border-color: var(--accent); }
 .bandinfo button { font: inherit; font-size: calc(13 * var(--u)); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; background: none; border: 0; border-bottom: 1px solid var(--fg); color: var(--fg); padding: 0; }
 .bandinfo button:hover { color: var(--accent); border-color: var(--accent); }
-.proyectos { display: flex; flex-direction: column; gap: 10px; }
-.proyecto { font: inherit; color: inherit; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 0 0 6px; text-align: left; cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 24px; }
-.proyecto .nombre { font-family: var(--font-maquina); font-weight: 400; font-size: clamp(18px, 2.6vw, 26px); line-height: 1.2; letter-spacing: 0; overflow-wrap: anywhere; color: var(--neon); }
-.proyecto:hover { border-color: var(--neon); }
-.proyecto:hover .nombre { text-shadow: 0 0 14px rgb(57 255 20 / .55); }
+.proyectos { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--line); }
+.proyecto { font: inherit; color: inherit; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 14px 0; text-align: left; cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 24px; }
+.proyecto .nombre { font-family: var(--font-display); font-weight: 600; font-size: calc(17 * var(--u)); line-height: 1.25; letter-spacing: .02em; overflow-wrap: anywhere; color: var(--fg); transition: color .15s; }
+.proyecto .mono { transition: color .15s; }
+.proyecto:hover .nombre, .proyecto:focus-visible .nombre { color: var(--accent); }
+.proyecto:hover .mono, .proyecto:focus-visible .mono { color: var(--fg); }
 
 /* Ventana de álbum */
 .overlay {
@@ -234,11 +235,21 @@ a.btn { display: inline-block; text-decoration: none; }
   .reg .d { grid-column: 2; }
 }
 
+.sobre-toggle { display: flex; align-items: baseline; gap: 14px; font: inherit; font-size: calc(17 * var(--u)); letter-spacing: .04em; text-align: left; background: none; border: 0; padding: 0; cursor: pointer; color: var(--fg); }
+.sobre-toggle:hover { color: var(--accent); }
+.sobre-toggle .mono { color: inherit; font-size: calc(15 * var(--u)); }
+.sobre-toggle[aria-expanded="true"] { margin-bottom: calc(24 * var(--u)); }
+.sobre-toggle[aria-expanded="false"] { margin: 0; }
 /* Links */
 .links { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
 .links a { font-family: var(--font-display); font-weight: 600; font-size: clamp(20px, 3vw, 28px); line-height: 1.2; text-decoration: none; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
 .links a:hover { color: var(--accent); border-color: var(--accent); }
 
+/* Paginación */
+.pager { display: flex; align-items: center; justify-content: center; gap: 20px; padding-block: 22px 6px; min-height: 48px; }
+.pager button { font: inherit; font-size: calc(15 * var(--u)); letter-spacing: .12em; cursor: pointer; padding: 8px 18px; background: transparent; color: var(--fg); border: 1px solid var(--fg); }
+.pager button:hover { background: var(--fg); color: var(--bg); }
+.pager .mono { min-width: 5ch; text-align: center; }
 footer { padding-top: 56px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
 
 @media (max-width: 720px) {
@@ -293,8 +304,8 @@ footer { padding-top: 56px; display: flex; flex-wrap: wrap; justify-content: spa
 
     <section id="sobre">
       <h2>Sobre</h2>
-      <p class="sobre-txt">Colección de trabajos, proyectos y experimentación.</p>
-      <ul class="registro" id="registro"></ul>
+      <button class="sobre-txt sobre-toggle" type="button" id="registro-toggle" aria-expanded="false" aria-controls="registro"><span>REGISTRO DE TRABAJOS Y PROYECTOS</span><span class="mono" id="registro-signo" aria-hidden="true">+</span></button>
+      <ul class="registro" id="registro" hidden></ul>
     </section>
 
     <section id="links">
@@ -486,6 +497,37 @@ var BANDAS = [
     if (text != null) n.textContent = text;
     return n;
   }
+  /* Paginación: size elementos por página, filtrando por data-cat */
+  function paginador(cont, size) {
+    var st = { cat: "Todos", page: 0 };
+    var nav = el("div", "pager");
+    nav.setAttribute("role", "navigation");
+    cont.parentNode.insertBefore(nav, cont.nextSibling);
+    function render() {
+      var items = Array.prototype.filter.call(cont.children, function (c) {
+        return st.cat === "Todos" || c.getAttribute("data-cat") === st.cat;
+      });
+      var pages = Math.max(1, Math.ceil(items.length / size));
+      if (st.page > pages - 1) st.page = pages - 1;
+      Array.prototype.forEach.call(cont.children, function (c) { c.hidden = true; });
+      items.slice(st.page * size, (st.page + 1) * size).forEach(function (c) { c.hidden = false; });
+      nav.textContent = "";
+      nav.hidden = pages <= 1;
+      if (pages > 1) {
+        var prev = el("button", null, "<<"); prev.type = "button"; prev.setAttribute("aria-label", "Página anterior");
+        var next = el("button", null, ">>"); next.type = "button"; next.setAttribute("aria-label", "Página siguiente");
+        prev.style.visibility = st.page > 0 ? "visible" : "hidden";
+        next.style.visibility = st.page < pages - 1 ? "visible" : "hidden";
+        prev.addEventListener("click", function () { st.page--; render(); cont.parentNode.scrollIntoView({ behavior: "smooth", block: "start" }); });
+        next.addEventListener("click", function () { st.page++; render(); cont.parentNode.scrollIntoView({ behavior: "smooth", block: "start" }); });
+        nav.appendChild(prev);
+        nav.appendChild(el("span", "mono", (st.page + 1) + " / " + pages));
+        nav.appendChild(next);
+      }
+      return items.length;
+    }
+    return { render: render, filtrar: function (c) { st.cat = c; st.page = 0; return render(); } };
+  }
   function hues(node, a, b) { node.style.setProperty("--h1", a); node.style.setProperty("--h2", b); }
 
   /* Reproductor de video (Vimeo dentro de la página) */
@@ -571,6 +613,8 @@ var BANDAS = [
     }
     grilla.appendChild(clip);
   });
+  var pagVideo = paginador(grilla, 4);
+  pagVideo.render();
   var cats = ["Todos"];
   TRABAJOS.forEach(function (w) { if (cats.indexOf(w.cat) < 0) cats.push(w.cat); });
   cats.forEach(function (c, i) {
@@ -580,9 +624,7 @@ var BANDAS = [
     b.addEventListener("click", function () {
       Array.prototype.forEach.call(filtros.children, function (x) { x.setAttribute("aria-pressed", "false"); });
       b.setAttribute("aria-pressed", "true");
-      Array.prototype.forEach.call(grilla.children, function (card) {
-        card.hidden = !(c === "Todos" || card.getAttribute("data-cat") === c);
-      });
+      pagVideo.filtrar(c);
     });
     filtros.appendChild(b);
   });
@@ -610,6 +652,8 @@ var BANDAS = [
     o.addEventListener("click", cerrarFoto);
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !o.hidden) cerrarFoto(); });
   })();
+  var pagImg = paginador(galeria, 12);
+  pagImg.render();
   var filtrosImg = document.getElementById("filtros-imagenes");
   var vacioImg = document.createElement("p");
   vacioImg.className = "mono"; vacioImg.hidden = true; vacioImg.textContent = "Próximamente";
@@ -622,12 +666,7 @@ var BANDAS = [
     b.addEventListener("click", function () {
       Array.prototype.forEach.call(filtrosImg.children, function (x) { x.setAttribute("aria-pressed", "false"); });
       b.setAttribute("aria-pressed", "true");
-      var visibles = 0;
-      Array.prototype.forEach.call(galeria.children, function (f) {
-        f.hidden = !(c === "Todos" || f.getAttribute("data-cat") === c);
-        if (!f.hidden) visibles++;
-      });
-      vacioImg.hidden = visibles > 0;
+      vacioImg.hidden = pagImg.filtrar(c) > 0;
     });
     filtrosImg.appendChild(b);
   });
@@ -795,6 +834,14 @@ var BANDAS = [
     li.appendChild(t);
     li.appendChild(el("span", "d", [r.tipo, r.d].filter(Boolean).join(" · ")));
     lista.appendChild(li);
+  });
+  /* Lista oculta: se despliega completa al apretar el título */
+  var tg = document.getElementById("registro-toggle"), signo = document.getElementById("registro-signo");
+  tg.addEventListener("click", function () {
+    var abrir = lista.hidden;
+    lista.hidden = !abrir;
+    tg.setAttribute("aria-expanded", abrir ? "true" : "false");
+    signo.textContent = abrir ? "\u2212" : "+";
   });
 
   /* Copiar correo */
