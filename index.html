@@ -110,7 +110,7 @@ section.primera { padding-top: 24px; }
 /* Video de fondo en Música: a todo el ancho, detrás del contenido */
 html, body { overflow-x: clip; }
 #musica { position: relative; isolation: isolate; min-height: 0; padding-bottom: 8px; }
-.fondo-video { position: absolute; top: 0; bottom: 0; left: calc(50% - 50vw); width: 100vw; z-index: -1; overflow: hidden; pointer-events: none; container-type: size; background: var(--bg); -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 70%, transparent), linear-gradient(to right, transparent, #000 12%, #000 88%, transparent); -webkit-mask-composite: source-in; mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 70%, transparent), linear-gradient(to right, transparent, #000 12%, #000 88%, transparent); mask-composite: intersect; }
+.fondo-video { position: absolute; top: 0; bottom: 0; left: calc(50% - 50vw); width: 100vw; z-index: -1; overflow: hidden; pointer-events: none; container-type: size; background: var(--bg); -webkit-mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent), linear-gradient(to right, transparent, #000 4%, #000 96%, transparent); -webkit-mask-composite: source-in; mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent), linear-gradient(to right, transparent, #000 4%, #000 96%, transparent); mask-composite: intersect; }
 .fondo-video iframe { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: max(100cqw, 177.78cqh); height: max(100cqh, 56.25cqw); border: 0; }
 .fondo-video::after { content: ""; position: absolute; inset: 0; background: rgb(5 5 6 / .3); }
 @media (prefers-reduced-motion: reduce) { .fondo-video iframe { display: none; } }
