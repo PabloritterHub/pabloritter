@@ -220,8 +220,8 @@ a.addr:hover { color: var(--accent); }
 }
 .btn:hover { background: var(--fg); color: var(--bg); }
 .social { display: flex; flex-wrap: wrap; gap: 6px 24px; margin: 0; padding: 0; list-style: none; font-size: calc(13 * var(--u)); letter-spacing: .1em; text-transform: uppercase; }
-.social a { text-decoration: none; color: var(--muted); border-bottom: 1px solid var(--line); }
-.social a:hover { color: var(--fg); border-color: var(--fg); }
+.social a { text-decoration: none; color: var(--muted); border-bottom: 0; transition: color .15s; }
+.social a:hover { color: var(--fg); }
 
 /* Sobre: registro de trabajos */
 .sobre-txt { margin: 0 0 calc(24 * var(--u)); max-width: 60ch; font-size: calc(17 * var(--u)); color: var(--fg); }
@@ -249,8 +249,8 @@ header.top nav { margin-left: auto; }
 .lang button[aria-pressed="true"] { color: var(--fg); border-color: var(--fg); }
 /* Links */
 .links { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
-.links a { font-family: var(--font-display); font-weight: 600; font-size: clamp(20px, 3vw, 28px); line-height: 1.2; text-decoration: none; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
-.links a:hover { color: var(--accent); border-color: var(--accent); }
+.links a { font-family: var(--font-display); font-weight: 600; font-size: clamp(20px, 3vw, 28px); line-height: 1.2; text-decoration: none; border-bottom: 0; overflow-wrap: anywhere; transition: color .15s; }
+.links a:hover { color: var(--accent); }
 
 /* Paginación */
 .pager { display: flex; align-items: center; justify-content: center; gap: 20px; padding-block: 22px 6px; min-height: 48px; }
@@ -332,10 +332,6 @@ footer { padding-top: 56px; display: flex; flex-wrap: wrap; justify-content: spa
         <button class="btn" type="button" id="copiar" data-t>Copiar</button>
         <span class="mono" id="estado" role="status" aria-live="polite"></span>
       </div>
-      <ul class="social">
-        <li><a href="https://vimeo.com/" target="_blank" rel="noopener">Vimeo</a></li>
-        <li><a href="https://deceptionisland.bandcamp.com/" target="_blank" rel="noopener">Bandcamp</a></li>
-      </ul>
     </section>
   </main>
 
@@ -497,7 +493,7 @@ var BANDAS = [
   ] },
   { n: "Animadversion", grupo: "Banda", h1: 265, h2: 305, url: "", discos: [] },
   { n: "MEPHIFER", grupo: "Solo", h1: 285, h2: 330, url: "", discos: [
-    { t: "MEPHIFER", genero: "Power violence / Post hardcore", url: "" }
+    { t: "MEPHIFER", genero: "Power violence / Noise rock / Noise", url: "" }
   ] }
 ];
 /* ================================ */
