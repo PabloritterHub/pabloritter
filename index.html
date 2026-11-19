@@ -239,14 +239,14 @@ a.addr:hover { color: var(--accent); }
 /* Sobre: registro de trabajos */
 .sobre-txt { margin: 0 0 calc(24 * var(--u)); max-width: 60ch; font-size: calc(17 * var(--u)); color: var(--fg); }
 .registro { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
-.reg { display: grid; grid-template-columns: 90px minmax(0, 1.2fr) minmax(0, 1fr); gap: 4px 24px; padding-block: 14px; border-bottom: 1px solid var(--line); align-items: baseline; }
-.reg .y { font-family: var(--font-mono); font-size: calc(11 * var(--u)); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-.reg .t { font-family: var(--font-display); font-weight: 600; font-size: calc(17 * var(--u)); line-height: 1.25; overflow-wrap: anywhere; }
+.reg { display: grid; grid-template-columns: 64px minmax(0, 1.2fr) minmax(0, 1fr); gap: 2px 18px; padding-block: 7px; border-bottom: 1px solid var(--line); align-items: baseline; }
+.reg .y { font-family: var(--font-mono); font-size: calc(10 * var(--u)); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.reg .t { font-family: var(--font-display); font-weight: 600; font-size: calc(13 * var(--u)); line-height: 1.25; overflow-wrap: anywhere; }
 .reg .t a { text-decoration: none; border-bottom: 1px solid var(--line); }
 .reg .t a:hover { color: var(--accent); border-color: var(--accent); }
-.reg .d { font-size: calc(14 * var(--u)); color: var(--muted); }
+.reg .d { font-size: calc(11.5 * var(--u)); color: var(--muted); }
 @media (max-width: 720px) {
-  .reg { grid-template-columns: 56px minmax(0, 1fr); }
+  .reg { grid-template-columns: 44px minmax(0, 1fr); }
   .reg .d { grid-column: 2; }
 }
 
