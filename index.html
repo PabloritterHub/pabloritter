@@ -49,6 +49,7 @@ a { color: inherit; }
 
 /* Cabecera */
 header.top {
+  position: relative; z-index: 5;
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
   gap: 10px 32px; padding-block: 22px 18px;
 }
@@ -110,7 +111,7 @@ section.primera { padding-top: 24px; }
 /* Video de fondo en Música: a todo el ancho, detrás del contenido */
 html, body { overflow-x: clip; }
 #musica { position: relative; isolation: isolate; min-height: 0; padding-bottom: 8px; }
-.fondo-video { position: absolute; top: 0; bottom: 0; left: calc(50% - 50vw); width: 100vw; z-index: -1; overflow: hidden; pointer-events: none; container-type: size; background: var(--bg); }
+.fondo-video { position: absolute; top: calc(-1 * var(--hh, 70px)); bottom: 0; left: calc(50% - 50vw); width: 100vw; z-index: -1; overflow: hidden; pointer-events: none; container-type: size; background: var(--bg); }
 .fondo-video iframe { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: max(100cqw, 177.78cqh); height: max(100cqh, 56.25cqw); border: 0; }
 .fondo-video::after { content: ""; position: absolute; inset: 0; background: rgb(2 2 2 / .3); }
 @media (prefers-reduced-motion: reduce) { .fondo-video iframe { display: none; } }
@@ -969,6 +970,17 @@ var BANDAS = [
     });
   });
   repintar();
+})();
+</script>
+<script>
+/* El video de fondo sube hasta el borde superior de la página, detrás de la cabecera */
+(function () {
+  var m = document.getElementById("musica");
+  function ajustar() { document.documentElement.style.setProperty("--hh", m.offsetTop + "px"); }
+  ajustar();
+  window.addEventListener("resize", ajustar);
+  window.addEventListener("load", ajustar);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajustar);
 })();
 </script>
 </body>
