@@ -107,6 +107,13 @@ nav a:hover { color: var(--fg); border-color: var(--fg); }
 /* Secciones */
 section { padding-top: 64px; scroll-margin-top: 8px; }
 section.primera { padding-top: 24px; }
+/* Video de fondo en Música: a todo el ancho, detrás del contenido */
+html, body { overflow-x: clip; }
+#musica { position: relative; isolation: isolate; min-height: 92vh; }
+.fondo-video { position: absolute; top: 0; bottom: 0; left: calc(50% - 50vw); width: 100vw; z-index: -1; overflow: hidden; pointer-events: none; container-type: size; background: var(--bg); }
+.fondo-video iframe { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: max(100cqw, 177.78cqh); height: max(100cqh, 56.25cqw); border: 0; }
+.fondo-video::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgb(5 5 6 / .45), rgb(5 5 6 / .25) 45%, var(--bg)); }
+@media (prefers-reduced-motion: reduce) { .fondo-video iframe { display: none; } }
 h2 {
   margin: 0 0 20px; font-family: var(--font-display); font-weight: 600; font-size: calc(13 * var(--u));
   letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
@@ -294,6 +301,10 @@ footer { padding-top: 56px; display: flex; flex-wrap: wrap; justify-content: spa
 
   <main id="inicio">
     <section id="musica" class="primera">
+      <!-- Video de fondo (prueba): blind spot. Para quitarlo, borra este div. -->
+      <div class="fondo-video" aria-hidden="true">
+        <iframe src="https://player.vimeo.com/video/1247136726?background=1&autoplay=1&loop=1&muted=1&autopause=0&dnt=1" title="" tabindex="-1" allow="autoplay; fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </div>
       <h2 data-t>Música</h2>
       <div class="filters" id="filtros-musica" role="group" aria-label="Filtrar música por tipo" data-ta></div>
       <div class="bandinfo" id="banda-info" hidden></div>
