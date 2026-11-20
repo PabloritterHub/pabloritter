@@ -238,21 +238,22 @@ a.addr:hover { color: var(--accent); }
 
 /* Sobre: registro de trabajos */
 .sobre-txt { margin: 0 0 calc(24 * var(--u)); max-width: 60ch; font-size: calc(17 * var(--u)); color: var(--fg); }
-.registro { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
-.reg { display: grid; grid-template-columns: 64px minmax(0, 1.2fr) minmax(0, 1fr); gap: 2px 18px; padding-block: 7px; border-bottom: 1px solid var(--line); align-items: baseline; }
-.reg .y { font-family: var(--font-mono); font-size: calc(10 * var(--u)); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-.reg .t { font-family: var(--font-display); font-weight: 600; font-size: calc(13 * var(--u)); line-height: 1.25; overflow-wrap: anywhere; }
-.reg .t a { text-decoration: none; border-bottom: 1px solid var(--line); }
+.registro { margin: 0; padding: 0; list-style: none; }
+.reg { display: grid; grid-template-columns: 52px minmax(0, 1.2fr) minmax(0, 1fr); gap: 2px 18px; padding-block: 4px; align-items: baseline; }
+.reg .y { font-family: var(--font-mono); font-size: calc(9 * var(--u)); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.reg .t { font-family: var(--font-display); font-weight: 600; font-size: calc(11 * var(--u)); line-height: 1.25; overflow-wrap: anywhere; }
+.reg .t a { text-decoration: none; border-bottom: 0; }
 .reg .t a:hover { color: var(--accent); border-color: var(--accent); }
-.reg .d { font-size: calc(11.5 * var(--u)); color: var(--muted); }
+.reg:has(a:hover) .d, .reg:has(a:focus-visible) .d { color: var(--accent); }
+.reg .d { font-size: calc(10 * var(--u)); color: var(--muted); }
 @media (max-width: 720px) {
   .reg { grid-template-columns: 44px minmax(0, 1fr); }
   .reg .d { grid-column: 2; }
 }
 
-.sobre-toggle { display: flex; align-items: baseline; gap: 14px; font: inherit; font-size: calc(17 * var(--u)); letter-spacing: .04em; text-align: left; background: none; border: 0; padding: 0; cursor: pointer; color: var(--fg); }
+.sobre-toggle { display: flex; align-items: baseline; gap: 14px; font-family: var(--font-display); font-weight: 600; font-size: clamp(20px, 3vw, 28px); line-height: 1.2; letter-spacing: normal; text-transform: none; text-align: left; background: none; border: 0; padding: 0; cursor: pointer; color: var(--fg); }
 .sobre-toggle:hover { color: var(--accent); }
-.sobre-toggle .mono { color: inherit; font-size: calc(15 * var(--u)); }
+.sobre-toggle .mono { color: inherit; font-size: calc(18 * var(--u)); }
 .sobre-toggle[aria-expanded="true"] { margin-bottom: calc(24 * var(--u)); }
 .sobre-toggle[aria-expanded="false"] { margin: 0; }
 header.top nav { margin-left: auto; }
@@ -296,7 +297,7 @@ footer { padding-top: 56px; display: flex; flex-wrap: wrap; justify-content: spa
       <a href="#musica" data-t>Música</a>
       <a href="#imagenes" data-t>Imágenes</a>
       <a href="#video" data-t>Video</a>
-      <a href="#sobre" data-t>Sobre</a>
+      <a href="#log" data-t>Log</a>
       <a href="#links" data-t>Links</a>
       <a href="#contacto" data-t>Contacto</a>
     </nav>
@@ -329,9 +330,8 @@ footer { padding-top: 56px; display: flex; flex-wrap: wrap; justify-content: spa
       <div class="stills" id="grilla"></div>
     </section>
 
-    <section id="sobre">
-      <h2 data-t>Sobre</h2>
-      <button class="sobre-txt sobre-toggle" type="button" id="registro-toggle" aria-expanded="false" aria-controls="registro"><span data-t>REGISTRO DE TRABAJOS Y PROYECTOS</span><span class="mono" id="registro-signo" aria-hidden="true">+</span></button>
+    <section id="log">
+      <h2><button class="sobre-toggle" type="button" id="registro-toggle" aria-expanded="false" aria-controls="registro"><span data-t>Log</span><span class="mono" id="registro-signo" aria-hidden="true">+</span></button></h2>
       <ul class="registro" id="registro" hidden></ul>
     </section>
 
@@ -529,8 +529,7 @@ var BANDAS = [
   }
   /* ===== Idioma (ES / EN). Los nombres de proyectos no se traducen. ===== */
   var EN = {
-    "Música": "Music", "Imágenes": "Images", "Video": "Video", "Sobre": "About", "Links": "Links", "Contacto": "Contact",
-    "REGISTRO DE TRABAJOS Y PROYECTOS": "RECORD OF WORKS AND PROJECTS",
+    "Música": "Music", "Imágenes": "Images", "Video": "Video", "Links": "Links", "Contacto": "Contact",
     "Todos": "All", "Todas": "All", "Solo": "Solo", "Banda": "Band",
     "Digital": "Digital", "Híbrido": "Hybrid", "Bocetos": "Sketches",
     "Clips": "Clips", "Cortometraje": "Short film", "Próximamente": "Coming soon",
@@ -892,7 +891,7 @@ var BANDAS = [
   });
   mostrar(0);
 
-  /* Sobre: registro de trabajos (sale de TRABAJOS y BANDAS; si agregas "year" aparece el año) */
+  /* Log: lista de trabajos y proyectos (sale de TRABAJOS y BANDAS; si agregas "year" aparece el año) */
   var registro = [];
   TRABAJOS.forEach(function (w) {
     registro.push({ y: w.year || 0, t: w.titulo || w.t, tipo: w.cat, d: w.info || "", v: true, url: w.url });
@@ -919,7 +918,7 @@ var BANDAS = [
   });
   }
   pintarRegistro();
-  /* Lista oculta: se despliega completa al apretar el título */
+  /* Log: se abre y cierra al apretar el título */
   var tg = document.getElementById("registro-toggle"), signo = document.getElementById("registro-signo");
   tg.addEventListener("click", function () {
     var abrir = lista.hidden;
